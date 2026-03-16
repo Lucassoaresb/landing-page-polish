@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagnóstico de Reengenharia no RH</title>
+  <meta name="description" content="Descubra quais processos do seu RH podem ganhar eficiência com automação, IA e integração de sistemas." />
+  <meta property="og:title" content="Diagnóstico de Reengenharia no RH" />
+  <meta property="og:description" content="Automação, IA e integração de sistemas para o seu RH." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: hsl(240 6% 4%);
+      --fg: hsl(240 5% 96%);
+      --card: hsl(240 4% 8%);
+      --card-fg: hsl(240 5% 96%);
+      --primary: hsl(227 100% 59%);
+      --primary-fg: hsl(0 0% 100%);
+      --secondary: hsl(240 4% 14%);
+      --muted: hsl(240 5% 45%);
+      --border: hsla(0 0% 100% / 0.08);
+      --radius: 0.5rem;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15vh 1.5rem;
+      text-align: center;
+    }
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    .hero-inner { position: relative; max-width: 56rem; margin: 0 auto; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.375rem 0.75rem;
+      border-radius: 0.375rem;
+      border: 1px solid var(--border);
+      background: var(--secondary);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.75rem, 7vw, 6rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      text-wrap: balance;
+    }
+    .hero h1 .dim { color: var(--muted); }
+
+    .hero p {
+      margin-top: 2rem;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--muted);
+      max-width: 40rem;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+      text-wrap: pretty;
+    }
+
+    .hero-actions {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.5rem;
+      border-radius: var(--radius);
+      background: var(--fg);
+      color: var(--bg);
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.875rem;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+    .btn-primary:hover { opacity: 0.9; }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.5rem;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 0.875rem;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-outline:hover { color: var(--fg); border-color: hsla(0 0% 100% / 0.2); }
+
+    /* ── Arrow icon (inline SVG replacement) ── */
+    .icon-arrow {
+      width: 16px; height: 16px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ── Section common ── */
+    .section { padding: 15vh 1.5rem; }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+    .section-title {
+      margin-top: 1rem;
+      font-size: clamp(1.75rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    /* ── Benefits ── */
+    .benefits-grid {
+      max-width: 64rem;
+      margin: 0 auto;
+    }
+    .benefits-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-top: 4rem;
+    }
+    @media (min-width: 768px) {
+      .benefits-cards { grid-template-columns: repeat(3, 1fr); }
+      .benefits-cards .card-wide { grid-column: span 2; }
+    }
+
+    .benefit-card {
+      position: relative;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 2rem;
+      transition: border-color 0.2s;
+    }
+    .benefit-card:hover { border-color: hsla(0 0% 100% / 0.1); }
+    .benefit-card .top-line {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, hsla(227 100% 59% / 0.2), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .benefit-card:hover .top-line { opacity: 1; }
+
+    .benefit-icon {
+      width: 20px; height: 20px;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .benefit-card h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .benefit-card p {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Form ── */
+    .form-section { max-width: 48rem; margin: 0 auto; }
+    .form-section .text-center { text-align: center; margin-bottom: 3rem; }
+    .form-section .text-center p {
+      margin-top: 1rem;
+      color: var(--muted);
+      max-width: 36rem;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+
+    .form-card {
+      border-radius: 0.75rem;
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 2rem;
+    }
+    @media (min-width: 768px) { .form-card { padding: 3rem; } }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .form-grid-2 { grid-template-columns: 1fr 1fr; }
+    }
+
+    .form-group { display: flex; flex-direction: column; }
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input::placeholder,
+    .form-textarea::placeholder { color: hsla(240 5% 45% / 0.5); }
+    .form-input:focus,
+    .form-textarea:focus {
+      border-color: hsla(227 100% 59% / 0.5);
+      box-shadow: 0 0 0 1px hsla(227 100% 59% / 0.5);
+    }
+    .form-textarea { resize: none; }
+
+    .form-fields { display: flex; flex-direction: column; gap: 1.5rem; }
+
+    .btn-submit {
+      width: 100%;
+      justify-content: center;
+      margin-top: 0.5rem;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 1.5rem;
+    }
+    .footer-inner {
+      max-width: 64rem;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    @media (min-width: 768px) { .footer-inner { flex-direction: row; } }
+    .footer-brand {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-up {
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .delay-1 { animation-delay: 0.08s; }
+    .delay-2 { animation-delay: 0.16s; }
+    .delay-3 { animation-delay: 0.24s; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-inner">
+      <div class="animate-fade-up">
+        <span class="badge">
+          <span class="badge-dot"></span>
+          Diagnóstico de Reengenharia
+        </span>
+      </div>
+
+      <h1 class="animate-fade-up delay-1">
+        Reengenharia no RH<br><span class="dim">com precisão.</span>
+      </h1>
+
+      <p class="animate-fade-up delay-2">
+        Descubra quais processos do seu RH podem ganhar eficiência com automação, IA e integração de sistemas.
+      </p>
+
+      <div class="hero-actions animate-fade-up delay-3">
+        <a href="#diagnostico" class="btn-primary">
+          Quero meu diagnóstico
+          <svg class="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#beneficios" class="btn-outline">Ver benefícios</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ BENEFÍCIOS ═══ -->
+  <section id="beneficios" class="section">
+    <div class="benefits-grid">
+      <span class="section-label">Benefícios</span>
+      <h2 class="section-title">O que você vai receber</h2>
+
+      <div class="benefits-cards">
+        <!-- Card 1 — wide -->
+        <div class="benefit-card card-wide">
+          <div class="top-line"></div>
+          <svg class="benefit-icon" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          <h3>Diagnóstico de processos</h3>
+          <p>Análise detalhada dos fluxos atuais do seu RH para identificar gargalos e ineficiências.</p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="benefit-card">
+          <div class="top-line"></div>
+          <svg class="benefit-icon" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <h3>Mapa de automação</h3>
+          <p>Identificação das oportunidades de automação com maior impacto operacional.</p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="benefit-card">
+          <div class="top-line"></div>
+          <svg class="benefit-icon" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          <h3>Quick wins</h3>
+          <p>Ações rápidas que geram resultado imediato sem grandes investimentos.</p>
+        </div>
+
+        <!-- Card 4 — wide -->
+        <div class="benefit-card card-wide">
+          <div class="top-line"></div>
+          <svg class="benefit-icon" viewBox="0 0 24 24"><path d="M6 3v12"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+          <h3>Integração de ferramentas</h3>
+          <p>Sugestões de integração entre os sistemas que o seu RH já utiliza.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FORMULÁRIO ═══ -->
+  <section id="diagnostico" class="section">
+    <div class="form-section">
+      <div class="text-center">
+        <span class="section-label">Começar agora</span>
+        <h2 class="section-title">Solicite seu diagnóstico</h2>
+        <p>Preencha o formulário abaixo e nossa equipe entrará em contato com um diagnóstico personalizado.</p>
+      </div>
+
+      <div class="form-card">
+        <form class="form-fields" onsubmit="event.preventDefault()">
+          <div class="form-grid form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Nome</label>
+              <input type="text" class="form-input" placeholder="Seu nome completo" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Empresa</label>
+              <input type="text" class="form-input" placeholder="Nome da empresa" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">E-mail corporativo</label>
+            <input type="email" class="form-input" placeholder="email@empresa.com" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Principal desafio no RH</label>
+            <textarea class="form-textarea" rows="4" placeholder="Descreva brevemente os processos que gostaria de otimizar..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary btn-submit">
+            Solicitar diagnóstico gratuito
+            <svg class="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="footer-brand">RH Reengenharia</span>
+      <span class="footer-copy">© 2025 · Todos os direitos reservados</span>
+    </div>
+  </footer>
+
+</body>
+</html>
